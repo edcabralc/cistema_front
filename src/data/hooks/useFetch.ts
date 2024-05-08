@@ -1,15 +1,14 @@
+import { AxiosResponse } from "axios";
 import { api } from "@/data/services/api";
 
 export const useFetch = () => ({
-  getData: async (endpoint: string) => {
+  getData: async <T>(endpoint: string): Promise<AxiosResponse<T[]>> => {
     try {
-      const response = await api.get(endpoint, {
-        withCredentials: true,
-      });
-
+      const response: AxiosResponse<T[]> = await api.get<T[]>(endpoint);
+      console.log(response.data);
       return response;
     } catch (error) {
-      return error;
+      throw error;
     }
   },
 

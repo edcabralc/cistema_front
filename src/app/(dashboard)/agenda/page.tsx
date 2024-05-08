@@ -1,11 +1,29 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { IconCalendarPlus } from "@tabler/icons-react";
+import { useFetch } from "@/data/hooks/useFetch";
 
 import { Article } from "@/components/Article";
 import Link from "next/link";
+import { ReserveType } from "@/data/@types/reserve.type";
 
 const Page = () => {
+  const { getData } = useFetch();
+  const [data, setData] = useState<ReserveType[]>([]);
+
+  const loadData = async () => {
+    try {
+      const response = await getData<ReserveType>("/agenda");
+      setData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
   return (
     <Article>
       <div className="pb-4 mb-8 flex items-center justify-between border-b">
@@ -19,11 +37,15 @@ const Page = () => {
         </Link>
       </div>
       <section>
-        <div>fsdfsdfsdf</div>
-        <div>fsdfsdfsdf</div>
-        <div>fsdfsdfsdf</div>
-        <div>fsdfsdfsdf</div>
-        <div>fsdfsdfsdf</div>
+        {data?.map((item) => (
+          <div key={item.id}>
+            <div>{item.status}</div>
+            <div>{item.date}</div>
+            <div>{item.students}</div>
+            <div>{item.classCode}</div>
+            <div>{item.book}</div>
+          </div>
+        ))}
       </section>
     </Article>
   );

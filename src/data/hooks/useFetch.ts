@@ -1,26 +1,28 @@
-import { AxiosResponse } from "axios";
+import { Axios, AxiosResponse } from "axios";
 import { api } from "@/data/services/api";
 
 export const useFetch = () => ({
   getData: async <T>(endpoint: string): Promise<AxiosResponse<T[]>> => {
     try {
       const response: AxiosResponse<T[]> = await api.get<T[]>(endpoint);
-      console.log(response.data);
       return response;
     } catch (error) {
       throw error;
     }
   },
 
-  postData: async (endpoint: string, payload: any) => {
+  postData: async <T>(
+    endpoint: string,
+    payload: T
+  ): Promise<AxiosResponse<T>> => {
     try {
-      const response = await api.post(endpoint, payload, {
+      const response: AxiosResponse<T> = await api.post<T>(endpoint, payload, {
         withCredentials: true,
       });
 
       return response;
     } catch (error) {
-      return error;
+      throw error;
     }
   },
   uploadFile: async (endpoint: string, payload: any) => {

@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { IconArrowLeft } from "@tabler/icons-react";
 
+import { useFetch } from "@/data/hooks/useFetch";
+
 import { Article } from "@/components/Article";
 import { ReserveType, Book } from "@/data/@types/reserve.type";
 interface ExtendedReserveType extends ReserveType {
@@ -11,6 +13,7 @@ interface ExtendedReserveType extends ReserveType {
 }
 
 const Page = () => {
+  const { postData } = useFetch();
   const {
     register,
     handleSubmit,
@@ -27,38 +30,14 @@ const Page = () => {
     },
   });
 
-  const shifts = watch("shifts");
-  const times = watch("time");
-
-  console.log(shifts);
-  console.log(times[0]);
-
-  const onSubmit = (data: ExtendedReserveType) => {
+  const onSubmit = async (data: ExtendedReserveType) => {
+    const response = await postData<ReserveType>(
+      "agenda/reservar/663e5693a2971d24a1cc9a29",
+      data
+    );
+    console.log(response);
     console.log(data);
-    console.log(data.time[0]);
-    console.log(errors);
-    setValue("shifts", "data");
   };
-
-  useEffect(() => {
-    switch (shifts) {
-      case "manha":
-        setValue("time", ["7:30", "9:30"]);
-        break;
-      case "tarde":
-        setValue("time", ["13:30", "15:30"]);
-        break;
-      case "noite":
-        setValue("time", ["18:30", "20:30"]);
-        break;
-      case "sabado":
-        setValue("time", ["8:00", "10:00"]);
-        break;
-      default:
-        setValue("time", []);
-        break;
-    }
-  }, []);
 
   return (
     <Article>
@@ -147,7 +126,6 @@ const Page = () => {
             <option value="noite">Noite</option>
             <option value="sabado">sábado</option>
           </select>
-          {shifts}
         </div>
 
         <div>

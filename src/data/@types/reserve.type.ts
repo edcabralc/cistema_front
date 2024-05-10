@@ -11,7 +11,7 @@ export enum Book {
 }
 
 export type ReserveType = {
-  id: string;
+  _id: string;
   userId: string;
   date: string;
   time: string[];

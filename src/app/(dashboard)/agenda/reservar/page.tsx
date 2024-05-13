@@ -58,9 +58,9 @@ const Page = () => {
           <select
             {...register("book")}
             className="block w-full mt-1 rounded border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-            <option value="lab">Laboratório</option>
-            <option value="chromebook">Chromebook</option>
-            <option value="vr">Oculos VR</option>
+            <option value="Laboratório">Laboratório</option>
+            <option value="Chromebook">Chromebook</option>
+            <option value="Oculos VR">Oculos VR</option>
           </select>
           <p className="absolute -bottom-6 text-sm text-red-400">
             {errors.book?.message}

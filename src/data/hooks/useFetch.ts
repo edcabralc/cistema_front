@@ -53,7 +53,7 @@ export const useFetch = () => ({
 
   editData: async (endpoint: string, payload: any) => {
     try {
-      const response = await api.put(endpoint, payload, {
+      const response = await api.patch(endpoint, payload, {
         withCredentials: true,
       });
 

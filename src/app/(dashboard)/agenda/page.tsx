@@ -1,23 +1,28 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useForm, Form } from "react-hook-form";
+import Link from "next/link";
 import {
   IconCalendarPlus,
   IconCalendarCheck,
   IconCalendarMinus,
 } from "@tabler/icons-react";
+
 import { useFetch } from "@/data/hooks/useFetch";
 
+import { ReserveType, Status } from "@/data/@types/reserve.type";
+
 import { Article } from "@/components/Article";
-import Link from "next/link";
-import { ReserveType } from "@/data/@types/reserve.type";
 
 const Page = () => {
-  const { getData } = useFetch();
+  const { register, handleSubmit, control } = useForm<ReserveType>();
+  const { getData, editData } = useFetch();
   const [reservas, setReservas] = useState<ReserveType[]>([]);
 
   const loadData = async () => {
     try {
       const response = await getData<ReserveType>("/agenda");
+      console.log(response);
       setReservas(response.data);
     } catch (error) {
       console.error(error);
@@ -28,6 +33,24 @@ const Page = () => {
     loadData();
   }, []);
 
+  const handleApprove = async (data: ReserveType) => {
+    console.log("data:", data);
+    data = {
+      ...data,
+      status: Status.APPROVED,
+    };
+
+    try {
+      const response = await editData(
+        `agenda/reserva/atualizar/${data._id}`,
+        data
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Article>
       <div className="pb-4 mb-8 flex flex-col gap-8 lg:flex-row items-center justify-between border-b">
@@ -37,9 +60,6 @@ const Page = () => {
         <div className="w-full flex flex-1 lg:justify-end items-center gap-4">
           <div className="flex gap-4 items-center rounded border py-1 pl-4 focus:border border-sky-600">
             <form action="max-w-sm mx-auto">
-              <label className="" htmlFor="filter">
-                Filtrar
-              </label>
               <select
                 name="filter"
                 id="filter"
@@ -63,26 +83,29 @@ const Page = () => {
       <section>
         <div className="flex flex-col gap-4 ">
           {reservas?.map((reserva, index) => (
-            <div className="flex flex-col p-6 lg:gap-10 lg:flex-row justify-between items-center border rounded hover:bg-zinc-50">
+            <div className="flex flex-col p-6 gap-4 lg:gap-10 lg:flex-row items-center border rounded hover:bg-zinc-50">
               <div key={index} id="card" className="flex w-full">
                 <div className="w-full flex lg:justify-center flex-col lg:flex-row items-center gap-4 lg:gap-8 ">
+                  <div>{reserva._id}</div>
                   <div className="w-full flex flex-col gap-2">
                     <p className="text-zinc-500">Agendamento:</p>
                     <h2 className="text-lg font-bold text-zinc-600">
-                      {reserva.date}
+                      {reserva.date.toLocaleString()}
                     </h2>
                   </div>
-
                   <div className="w-full flex flex-col gap-2">
-                    <p className="text-zinc-500">Status</p>
-                    <p
-                      className={
-                        reserva.status === "pending"
-                          ? "bg-red-300 rounded p-1.5 text-center text-[12px] font-bold"
-                          : "bg-green-300 rounded p-1.5 text-center text-[12px] font-bold"
-                      }>
-                      {reserva.status}
-                    </p>
+                    <p className="text-zinc-500">Horário:</p>
+                    <h2 className="text-lg font-bold text-zinc-600">
+                      {reserva.time.map((hora) => hora)}
+                    </h2>
+                  </div>
+                  <div className="w-full flex flex-col gap-2">
+                    <p className="text-zinc-500">Professor</p>
+                    <p>{reserva.userId}</p>
+                  </div>
+                  <div className="w-full flex flex-col gap-2">
+                    <p className="text-zinc-500">Reserva:</p>
+                    <p>{reserva.book}</p>
                   </div>
                   <div className="w-full flex flex-col gap-2">
                     <p className="text-zinc-500">Quantidade:</p>
@@ -92,28 +115,47 @@ const Page = () => {
                     <p className="text-zinc-500">Código:</p>
                     <p>{reserva.classCode}</p>
                   </div>
+
                   <div className="w-full flex flex-col gap-2">
-                    <p className="text-zinc-500">Reserva:</p>
-                    <p>{reserva.book}</p>
-                  </div>
-                  <div className="w-full flex flex-col gap-2">
-                    <p className="text-zinc-500">Professor</p>
-                    <p>{reserva.userId}</p>
+                    <p className="text-zinc-500">Status</p>
+                    <p
+                      className={
+                        reserva.status === "Pendente"
+                          ? "w-20 bg-red-300 rounded p-1.5 text-center text-[12px] font-bold"
+                          : "w-20 bg-green-300 rounded p-1.5 text-center text-[12px] font-bold"
+                      }>
+                      {reserva.status}
+                    </p>
                   </div>
                 </div>
               </div>
-              <form action="">
-                <button className="flex gap-4 p-4 cursor-pointer rounded hover:bg-sky-600 hover:text-white">
-                  <IconCalendarCheck />
-                  Aprovar
-                </button>
-              </form>
-              <form action="">
-                <button className="flex gap-4 p-4 cursor-pointer rounded hover:bg-red-400 hover:text-white">
-                  <IconCalendarMinus />
-                  Cancelar
-                </button>
-              </form>
+              <div className="w-full flex-1 flex gap-4">
+                <form className="w-full">
+                  <input
+                    type="text"
+                    {...register("_id")}
+                    value={reserva._id}
+                    name="_id"
+                  />
+                  {reserva.status === "Agendado" ? (
+                    <>
+                      <button className="w-full flex gap-4 py-3 justify-center px-6 cursor-pointer border rounded hover:bg-red-500 hover:text-white">
+                        <IconCalendarMinus />
+                        Cancelar
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className="w-full flex justify-center gap-4 py-3 px-6 cursor-pointer border rounded hover:bg-sky-500 hover:text-white"
+                        onSubmit={handleSubmit(handleApprove)}>
+                        <IconCalendarCheck />
+                        Confirmar
+                      </button>
+                    </>
+                  )}
+                </form>
+              </div>
             </div>
           ))}
         </div>

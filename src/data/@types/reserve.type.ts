@@ -1,20 +1,20 @@
 export enum Status {
-  APPROVED = "approved",
-  PENDING = "pending",
-  CANCELLED = "cancelled",
+  APPROVED = "Agendado",
+  PENDING = "Pendente",
+  CANCELLED = "Cancelado",
 }
 
 export enum Book {
-  LAB = "lab",
-  VR = "vr",
-  CHROMEBOOK = "chromebook",
+  LAB = "Laboratório",
+  VR = "Oculos VR",
+  CHROMEBOOK = "Chromebook",
 }
 
 export type ReserveType = {
   _id: string;
   userId: string;
   date: string;
-  time: string[];
+  time: [string];
   students: number;
   classCode: string;
   status: Status;

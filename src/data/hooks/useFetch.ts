@@ -51,15 +51,18 @@ export const useFetch = () => ({
     }
   },
 
-  editData: async (endpoint: string, payload: any) => {
+  editData: async <T>(
+    endpoint: string,
+    payload: T
+  ): Promise<AxiosResponse<T>> => {
     try {
-      const response = await api.patch(endpoint, payload, {
+      const response: AxiosResponse<T> = await api.patch<T>(endpoint, payload, {
         withCredentials: true,
       });
 
       return response;
     } catch (error) {
-      return error;
+      throw error;
     }
   },
 

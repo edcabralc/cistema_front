@@ -3,6 +3,7 @@
 import { Menu } from "@/components/Menu";
 import Image from "next/image";
 import { useState } from "react";
+import { IconMenu } from "@tabler/icons-react";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const [open, setOpen] = useState(false);
@@ -10,14 +11,16 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <main className="flex h-screen ">
-      <span className="absolute left-72" onClick={() => setOpen(!open)}>
-        menu
-      </span>
-
       <>
         <div className={open ? "w-1/5 border-r" : "w-20 border-r"}>
-          <aside className="w-full flex flex-col">
-            <div className="p-6 self-center">
+          <span
+            className="flex justify-center p-5  left-10"
+            onClick={() => setOpen(!open)}
+          >
+            <IconMenu stroke={2} />
+          </span>
+          <aside className="w-full flex flex-col relative">
+            <div className="p-6 self-center ">
               <Image
                 src={"/logo_cistema.webp"}
                 width={200}

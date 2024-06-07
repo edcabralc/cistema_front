@@ -11,33 +11,34 @@ import { Article } from "@/components/Article";
 import { Card } from "@/components/Card";
 
 const Page = () => {
-  const { getData } = useFetch();
-  const [reservas, setReservas] = useState<ReserveType[]>([]);
+  const reservas = useFetch<ReserveType[]>("/agenda");
+  // const [reservas, setReservas] = useState<ReserveType[]>([]);
 
-  const loadData = async () => {
-    try {
-      const response = await getData<ReserveType>("agenda");
+  // const loadData = async () => {
+  //   try {
+  //     const response = await getData<ReserveType>("agenda");
 
-      if (response.status !== 200) {
-        throw new Error("Erro ao carregar os dados");
-      }
+  //     if (response.status !== 200) {
+  //       throw new Error("Erro ao carregar os dados");
+  //     }
 
-      console.log(response);
-      setReservas(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //     console.log(response);
+  //     setReservas(response.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // useEffect(() => {
+  //   loadData();
+  // }, []);
 
   const compare = (a: any, b: any) => {
-    const dateA = new Date(a.date.replace(/-/g, "/"));
-    const dateB = new Date(b.date.replace(/-/g, "/"));
-
-    return dateB - dateA;
+    if (typeof a.date === "string" && typeof b.date === "string") {
+      const dateA = new Date(a.date.replace(/-/g, "/"));
+      const dateB = new Date(b.date.replace(/-/g, "/"));
+      return dateB.getTime() - dateA.getTime();
+    }
   };
 
   return (
@@ -47,7 +48,7 @@ const Page = () => {
           AGENDAMENTO LABORATÓRIO IDIOMAS
         </h1>
         <div className="w-full flex flex-1 lg:justify-end items-center gap-4">
-          <div className="flex gap-4 items-center rounded border py-1 pl-4 focus:border border-sky-600">
+          <div className="flex gap-4 items-center rounded border py-1  focus:border border-sky-600">
             <form action="max-w-sm mx-auto">
               <select
                 name="filter"
@@ -73,13 +74,24 @@ const Page = () => {
       </div>
       <section>
         <div className="flex flex-col gap-4 ">
-          {reservas.length < 0 ? (
-            <p>{reservas.length}Nenhum agendamento</p>
+          {!reservas.data ? (
+            <p>Nenhum agendamento</p>
           ) : (
             <>
-              {reservas?.sort(compare).map((reserva) => (
-                <Card reserva={reserva} key={reserva._id} load={loadData} />
-              ))}
+              {reservas.loading ? (
+                "Carregando..."
+              ) : (
+                <>
+                  {/* {reservas.data?.sort(compare).map((reserva: ReserveType) => ( */}
+                  {reservas.data?.map((reserva: ReserveType) => (
+                    <Card
+                      reserva={reserva}
+                      key={reserva.id}
+                      loading={reservas.loading}
+                    />
+                  ))}
+                </>
+              )}
             </>
           )}
         </div>

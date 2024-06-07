@@ -1,94 +1,150 @@
-import { Axios, AxiosResponse } from "axios";
-import { api } from "@/data/services/api";
+import { useState, useEffect, useRef } from "react";
+import { AxiosRequestConfig, AxiosResponse, isAxiosError } from "axios";
+import { api } from "../services/api";
 
-export const useFetch = () => ({
-  getData: async <T>(endpoint: string): Promise<AxiosResponse<T[]>> => {
-    try {
-      const response: AxiosResponse<T[]> = await api.get<T[]>(endpoint);
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  },
+interface TypeHttpRequest<T> {
+  loading: boolean | null;
+  error: string | null;
+  data: T | null;
+}
 
-  postData: async <T>(
-    endpoint: string,
-    payload: T
-  ): Promise<AxiosResponse<T>> => {
-    try {
-      const response: AxiosResponse<T> = await api.post<T>(endpoint, payload, {
-        withCredentials: true,
-      });
+export const useFetch = <T>(
+  url: string,
+  config?: AxiosRequestConfig
+): TypeHttpRequest<T> => {
+  const [loading, setLoading] = useState<boolean | null>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<T | null>(null);
 
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  },
-  uploadFile: async (endpoint: string, payload: any) => {
-    try {
-      const response = await api.post(endpoint, payload, {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+  const configRef = useRef(config);
+  configRef.current = config;
 
-      return response;
-    } catch (error) {
-      return error;
-    }
-  },
-  deleteData: async (endpoint: string, payload: any) => {
-    try {
-      const response = await api.delete(endpoint, {
-        withCredentials: true,
-      });
+  const controllerRef = useRef<AbortController | null>(null);
+  controllerRef.current = new AbortController();
+  const { signal } = controllerRef.current;
 
-      return response;
-    } catch (error) {
-      return error;
-    }
-  },
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response: AxiosResponse<T> = await api(url, {
+          signal,
+          ...configRef.current,
+        });
 
-  editData: async <T>(
-    endpoint: string,
-    payload: T
-  ): Promise<AxiosResponse<T>> => {
-    try {
-      const response: AxiosResponse<T> = await api.patch<T>(endpoint, payload, {
-        withCredentials: true,
-      });
+        if (response.status !== 200) {
+          throw new Error("Erro ao obter os dados");
+        }
+        setData(response.data);
+        setLoading(false);
+        setError(null);
+      } catch (error) {
+        if (isAxiosError(error)) {
+          setError(error.message);
+        }
+      }
+    };
 
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  },
+    fetchData();
 
-  deleteClient: async (id: string) => {
-    const endpoint = `/client/${id}`;
-    try {
-      const response = await api.delete(endpoint, {
-        withCredentials: true,
-      });
+    // return () => {
+    //   if (controllerRef.current) {
+    //     controllerRef.current?.abort();
+    //   }
+    // };
+  }, [url]);
 
-      return response;
-    } catch (error) {
-      return error;
-    }
-  },
+  return { loading, error, data };
+};
 
-  deleteCompany: async (id: string) => {
-    const endpoint = `/company/${id}`;
-    try {
-      const response = await api.delete(endpoint, {
-        withCredentials: true,
-      });
+// export const useFetch = () => ({
+//   getData: async <T>(endpoint: string): Promise<AxiosResponse<T[]>> => {
+//     try {
+//       const response: AxiosResponse<T[]> = await api.get<T[]>(endpoint);
+//       return response;
+//     } catch (error) {
+//       throw error;
+//     }
+//   },
 
-      return response;
-    } catch (error) {
-      return error;
-    }
-  },
-});
+//   postData: async <T>(
+//     endpoint: string,
+//     payload: T
+//   ): Promise<AxiosResponse<T>> => {
+//     try {
+//       const response: AxiosResponse<T> = await api.post<T>(endpoint, payload, {
+//         withCredentials: true,
+//       });
+
+//       return response;
+//     } catch (error) {
+//       throw error;
+//     }
+//   },
+//   uploadFile: async (endpoint: string, payload: any) => {
+//     try {
+//       const response = await api.post(endpoint, payload, {
+//         withCredentials: true,
+//         headers: {
+//           "Content-Type": "multipart/form-data",
+//         },
+//       });
+
+//       return response;
+//     } catch (error) {
+//       return error;
+//     }
+//   },
+//   deleteData: async (endpoint: string, payload: any) => {
+//     try {
+//       const response = await api.delete(endpoint, {
+//         withCredentials: true,
+//       });
+
+//       return response;
+//     } catch (error) {
+//       return error;
+//     }
+//   },
+
+//   editData: async <T>(
+//     endpoint: string,
+//     payload: T
+//   ): Promise<AxiosResponse<T>> => {
+//     try {
+//       const response: AxiosResponse<T> = await api.patch<T>(endpoint, payload, {
+//         withCredentials: true,
+//       });
+
+//       return response;
+//     } catch (error) {
+//       throw error;
+//     }
+//   },
+
+//   deleteClient: async (id: string) => {
+//     const endpoint = `/client/${id}`;
+//     try {
+//       const response = await api.delete(endpoint, {
+//         withCredentials: true,
+//       });
+
+//       return response;
+//     } catch (error) {
+//       return error;
+//     }
+//   },
+
+//   deleteCompany: async (id: string) => {
+//     const endpoint = `/company/${id}`;
+//     try {
+//       const response = await api.delete(endpoint, {
+//         withCredentials: true,
+//       });
+
+//       return response;
+//     } catch (error) {
+//       return error;
+//     }
+//   },
+// });

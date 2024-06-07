@@ -1,79 +1,54 @@
+import { useState } from "react";
+
 import { useForm } from "react-hook-form";
-
-import { useFetch } from "@/data/hooks/useFetch";
-
 import { IconCalendarCheck, IconCalendarMinus } from "@tabler/icons-react";
+
+import { Loading } from "@/components/Loading";
 
 import { ReserveType, Status } from "@/data/@types/reserve.type";
 import { formatDate } from "@/helpers/formatDate";
 import { revalidatePathAction } from "@/actions/revalidate.path";
 
-import { Loading } from "@/components/Loading";
-import { useEffect, useState } from "react";
-import { UserType } from "@/data/@types/user.type";
+import { useFetch } from "@/data/hooks/useFetch";
 
 interface CardProps {
   reserva: ReserveType;
-  load: () => void;
+  // load: () => void;
+  loading: boolean | null;
 }
 
-export const Card = ({ reserva, load }: CardProps) => {
+export const Card = ({ reserva, loading /*load*/ }: CardProps) => {
   const { register, handleSubmit } = useForm<ReserveType>();
-  const { editData, getData } = useFetch();
-  const [loading, setLoading] = useState<boolean>(false);
+  // const test = useFetch<ReserveType>('');
+  // const [loading, setLoading] = useState<boolean>(false);
 
-  const [teacher, setTeacher] = useState<UserType | any>([]);
+  // const handleApprove = async (data: ReserveType) => {
+  //   setLoading(true);
+  //   console.log("data:", data);
+  //   data = {
+  //     ...data,
+  //     status: Status.APPROVED,
+  //   };
 
-  const handleApprove = async (data: ReserveType) => {
-    setLoading(true);
-    console.log("data:", data);
-    data = {
-      ...data,
-      status: Status.APPROVED,
-    };
+  //   try {
+  //     const response = await editData<ReserveType>(
+  //       `agenda/reserva/atualizar/${data.id}`,
+  //       data
+  //     );
 
-    try {
-      const response = await editData<ReserveType>(
-        `agenda/reserva/atualizar/${data._id}`,
-        data
-      );
+  //     if (response.status !== 200) {
+  //       throw new Error("Erro ao atualizar");
+  //     }
 
-      if (response.status !== 200) {
-        throw new Error("Erro ao atualizar");
-      }
-
-      await revalidatePathAction("/agenda");
-      console.log(response);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      load();
-    }
-  };
-
-  const loadTeacher = async (id: string) => {
-    console.log("data:", id);
-
-    try {
-      const response = await getData<UserType>(`user/${id}`);
-
-      if (response.status !== 200) {
-        throw new Error("Erro ao atualizar");
-      }
-
-      setTeacher(response.data);
-
-      await revalidatePathAction("/agenda");
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    loadTeacher(reserva.userId);
-  }, []);
+  //     await revalidatePathAction("/agenda");
+  //     console.log(response);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     load();
+  //   }
+  // };
 
   return (
     <div className="flex flex-col p-6 gap-4 lg:gap-10 lg:flex-row items-center border rounded hover:bg-zinc-50">
@@ -88,13 +63,13 @@ export const Card = ({ reserva, load }: CardProps) => {
           <div className="w-full flex flex-col gap-2">
             <p className="text-zinc-500">Horário:</p>
             <h2 className="text-lg font-bold text-zinc-600">
-              {reserva.time?.map((hora: string) => hora)}
+              {reserva.time?.map((hora: string) => ` ${hora}\n `)}
             </h2>
           </div>
           <div className="w-full flex flex-col gap-2">
             <p className="text-zinc-500">Professor</p>
             {/* <p>{reserva.userId}</p> */}
-            <p>{teacher.name}</p>
+            <p>{reserva.user.name}</p>
           </div>
           <div className="w-full flex flex-col gap-2">
             <p className="text-zinc-500">Reserva:</p>
@@ -126,14 +101,14 @@ export const Card = ({ reserva, load }: CardProps) => {
       <div className="w-full flex justify-end flex-1">
         <input
           type="hidden"
-          {...register("_id")}
-          value={reserva._id}
+          {...register("id")}
+          value={reserva.id}
           name="_id"
           id="formUpdate"
         />
         {reserva.status === "Agendado" ? (
           <button
-            disabled={loading}
+            // disabled={loading}
             id="formUpdate"
             className="w-full h-12 lg:w-40 flex gap-4 justify-center items-center py-3 px-6 cursor-pointer border rounded hover:bg-red-500 hover:text-white"
           >
@@ -148,8 +123,8 @@ export const Card = ({ reserva, load }: CardProps) => {
         ) : (
           <button
             className="w-full h-12 flex lg:w-40 justify-center items-center gap-4 py-3 px-6 cursor-pointer border rounded hover:bg-sky-500 hover:text-white"
-            disabled={loading}
-            onClick={handleSubmit(handleApprove)}
+            // disabled={loading}
+            // onClick={handleSubmit(handleApprove)}
             type="button"
             id="formUpdate"
           >

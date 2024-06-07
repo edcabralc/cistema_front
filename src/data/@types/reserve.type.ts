@@ -1,3 +1,5 @@
+import { UserType } from "./user.type";
+
 export enum Status {
   APPROVED = "Agendado",
   PENDING = "Pendente",
@@ -11,7 +13,7 @@ export enum Book {
 }
 
 export type ReserveType = {
-  _id: string;
+  id: string;
   userId: string;
   date: string;
   time: [string];
@@ -19,4 +21,5 @@ export type ReserveType = {
   classCode: string;
   status: Status;
   book: Book;
+  user: Pick<UserType, "id" | "name" | "role">;
 };

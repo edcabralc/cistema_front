@@ -4,6 +4,7 @@ import { IconCalendarPlus } from "@tabler/icons-react";
 import Link from "next/link";
 
 import { useFetch } from "@/data/hooks/useFetch";
+import { useApi } from "@/data/hooks/useApi";
 
 import { ReserveType } from "@/data/@types/reserve.type";
 
@@ -12,22 +13,21 @@ import { Card } from "@/components/Card";
 
 const Page = () => {
   const reservas = useFetch<ReserveType[]>("/agenda");
-  // const [reservas, setReservas] = useState<ReserveType[]>([]);
+  const { getData } = useApi();
 
-  // const loadData = async () => {
-  //   try {
-  //     const response = await getData<ReserveType>("agenda");
+  const loadData = async () => {
+    try {
+      const response = await getData<ReserveType[]>("/agenda");
 
-  //     if (response.status !== 200) {
-  //       throw new Error("Erro ao carregar os dados");
-  //     }
+      if (response.status !== 200) {
+        throw new Error("Erro ao carregar os dados");
+      }
 
-  //     console.log(response);
-  //     setReservas(response.data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+      return reservas;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // useEffect(() => {
   //   loadData();
@@ -48,7 +48,7 @@ const Page = () => {
           AGENDAMENTO LABORATÓRIO IDIOMAS
         </h1>
         <div className="w-full flex flex-1 lg:justify-end items-center gap-4">
-          <div className="flex gap-4 items-center rounded border py-1  focus:border border-sky-600">
+          <div className="flex gap-4 items-center rounded border py-1 focus:border border-sky-600">
             <form action="max-w-sm mx-auto">
               <select
                 name="filter"
@@ -87,7 +87,7 @@ const Page = () => {
                     <Card
                       reserva={reserva}
                       key={reserva.id}
-                      loading={reservas.loading}
+                      reload={reservas.reload}
                     />
                   ))}
                 </>

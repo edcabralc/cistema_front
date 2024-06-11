@@ -4,6 +4,7 @@ import { Menu } from "@/components/Menu";
 import Image from "next/image";
 import { useState } from "react";
 import { IconMenu } from "@tabler/icons-react";
+import { Aside } from "@/components/Aside";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const [open, setOpen] = useState(false);
@@ -41,6 +42,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           {children}
         </article>
       </div>
+      {/* <Aside/> */}
+      <div className="w-96">hahahah</div>
     </main>
   );
 };

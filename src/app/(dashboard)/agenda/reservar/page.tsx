@@ -1,61 +1,56 @@
 "use client";
-import { useEffect, useCallback } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { parse, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-import { useFetch } from "@/data/hooks/useFetch";
-import { useShifts } from "@/data/hooks/useShifts";
+import { useApi } from "@/data/hooks/useApi";
 
 import { Article } from "@/components/Article";
 import { ReserveType, Book } from "@/data/@types/reserve.type";
-interface ExtendedReserveType extends ReserveType {
-  shifts: [string] | any;
-}
 
 const Page = () => {
-  // const { postData } = useFetch();
-  const { shifts, setShifts, setTimeShifts } = useShifts();
-  console.log(shifts);
+  const [loading, setLoading] = useState<boolean | null>(null);
+  const { postData } = useApi();
+
   const {
     register,
     handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<ExtendedReserveType>({
+    formState: { errors, isSubmitting },
+  } = useForm<ReserveType>({
     defaultValues: {
       book: Book.LAB,
       classCode: "",
       time: [],
-      shifts: [],
+
       // date: new Date(),
       students: 0,
     },
   });
 
-  const turnos = watch(["shifts"]);
-  const teste = setTimeShifts(turnos[0]);
-  console.log("teste: ", teste);
-  console.log("turnos: ", turnos);
-
-  useEffect(() => {
-    setValue("shifts", teste);
-  }, []);
-
-  const onSubmit = async (data: ExtendedReserveType) => {
+  const onSubmit = async (data: ReserveType) => {
+    setLoading(true);
     const parsedDate = parse(data.date, "yyyy-MM-dd", new Date(), {
       locale: ptBR,
     });
     const formattedDate = format(parsedDate, "dd/MM/yyyy", { locale: ptBR });
-    // const response = await postData<ReserveType>(
-    //   "agenda/reservar/663e5693a2971d24a1cc9a29",
-    //   { ...data, date: formattedDate }
-    // );
-    // console.log(response);
-    // console.log(data);
+    const response = await postData<ReserveType>(
+      "agenda/reservar/663e5693a2971d24a1cc9a29",
+      { ...data, date: formattedDate }
+    );
+
+    if (response.status !== 200) {
+      throw new Error(
+        "Não foi possivel autorizar o agendamento. Erro inesperado."
+      );
+    }
+
+    setLoading(false);
+
+    console.log(response);
+    console.log(data);
     console.log({ ...data, date: formattedDate });
   };
 
@@ -138,7 +133,7 @@ const Page = () => {
             {errors.date?.message}
           </p>
         </div>
-        <div className="flex flex-col gap-2">
+        {/* <div className="flex flex-col gap-2">
           <p>Horário do agendamento:</p>
           <select
             {...register("shifts")}
@@ -151,46 +146,268 @@ const Page = () => {
             <option value="noite">Noite</option>
             <option value="sabado">Sábado</option>
           </select>
-        </div>
+        </div> */}
 
-        <div>
+        <div className="">
           <p className="mb-4">Escolha os horários:</p>
-          <ul className="grid w-full gap-6 md:grid-cols-2">
-            <li>
-              <input
-                type="checkbox"
-                id="first-option"
-                value={teste?.[0]}
-                className="hidden peer"
-                {...register("time")}
-              />
-              <label
-                htmlFor="first-option"
-                className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
-              >
-                <div className="block">
-                  <div className="w-full">{teste?.[0]}</div>
-                </div>
-              </label>
-            </li>
-            <li>
-              <input
-                type="checkbox"
-                id="second-option"
-                value={teste?.[1]}
-                className="hidden peer"
-                {...register("time")}
-              />
-              <label
-                htmlFor="second-option"
-                className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
-              >
-                <div className="block">
-                  <div className="w-full">{teste?.[1]}</div>
-                </div>
-              </label>
-            </li>
-          </ul>
+          <div className="flex items-center gap-4 border p-6 rounded">
+            <p className="flex-1">Manhã</p>
+            <ul className="flex w-full gap-2 md:grid-cols-2">
+              <li>
+                <input
+                  type="checkbox"
+                  id="first-option-manha"
+                  value={"07:30"}
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="first-option-manha"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">07:30 - 8:30</div>
+                  </div>
+                </label>
+              </li>
+              <li>
+                <input
+                  type="checkbox"
+                  id="second-option-manha"
+                  value="08:30"
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="second-option-manha"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">08:30 - 09:30</div>
+                  </div>
+                </label>
+              </li>
+              <li>
+                <input
+                  type="checkbox"
+                  id="third-option-manha"
+                  value="09:30"
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="third-option-manha"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">09:30 - 10:30</div>
+                  </div>
+                </label>
+              </li>
+              <li>
+                <input
+                  type="checkbox"
+                  id="fourth-option-manha"
+                  value="10:30"
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="fourth-option-manha"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">10:30 - 11:30</div>
+                  </div>
+                </label>
+              </li>
+            </ul>
+          </div>
+          <div className="flex items-center gap-4 py-2">
+            <p className="flex-1">Tarde:</p>
+            <ul className="flex w-full gap-2 md:grid-cols-2">
+              <li>
+                <input
+                  type="checkbox"
+                  id="first-option-tarde"
+                  value={"13:00"}
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="first-option-tarde"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">13:00 - 14:00</div>
+                  </div>
+                </label>
+              </li>
+              <li>
+                <input
+                  type="checkbox"
+                  id="second-option-tarde"
+                  value="14:00"
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="second-option-tarde"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">14:00 - 15:00</div>
+                  </div>
+                </label>
+              </li>
+              <li>
+                <input
+                  type="checkbox"
+                  id="third-option-tarde"
+                  value="15:00"
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="third-option-tarde"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">15:00 - 16:00</div>
+                  </div>
+                </label>
+              </li>
+              <li>
+                <input
+                  type="checkbox"
+                  id="fourth-option-tarde"
+                  value="16:00"
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="fourth-option-tarde"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">16:00 - 17:00</div>
+                  </div>
+                </label>
+              </li>
+            </ul>
+          </div>
+          <div className="flex items-center gap-4 py-2">
+            <p className="flex-1">Noite</p>
+            <ul className="flex w-full gap-2 md:grid-cols-2">
+              <li>
+                <input
+                  type="checkbox"
+                  id="first-option-noite"
+                  value={"18:00"}
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="first-option-noite"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">18:00 - 19:00</div>
+                  </div>
+                </label>
+              </li>
+              <li>
+                <input
+                  type="checkbox"
+                  id="second-option-noite"
+                  value="19:00"
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="second-option-noite"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">19:00 - 20:00</div>
+                  </div>
+                </label>
+              </li>
+              <li>
+                <input
+                  type="checkbox"
+                  id="third-option-noite"
+                  value="20:00"
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="third-option-noite"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">20:00 - 21:00</div>
+                  </div>
+                </label>
+              </li>
+              <li>
+                <input
+                  type="checkbox"
+                  id="fourth-option-noite"
+                  value="21:00"
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="fourth-option-noite"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">21:00 - 22:00</div>
+                  </div>
+                </label>
+              </li>
+            </ul>
+          </div>
+          <div className="flex items-center gap-4 py-2">
+            <p className="flex-1">Sábado</p>
+            <ul className="flex w-full gap-2 md:grid-cols-2">
+              <li>
+                <input
+                  type="checkbox"
+                  id="first-option-sabado"
+                  value={"08:00"}
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="first-option-sabado"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">08:00</div>
+                  </div>
+                </label>
+              </li>
+              <li>
+                <input
+                  type="checkbox"
+                  id="second-option-sabado"
+                  value="10:00"
+                  className="hidden peer"
+                  {...register("time")}
+                />
+                <label
+                  htmlFor="second-option-sabado"
+                  className="inline-flex items-center justify-between w-full py-2 px-4 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
+                >
+                  <div className="block">
+                    <div className="w-full">10:00</div>
+                  </div>
+                </label>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div className="w-full flex  gap-6 lg:justify-end">
@@ -200,8 +417,11 @@ const Page = () => {
           >
             Cancelar
           </button>
-          <button className="w-6/12 bg-sky-600 rounded p-2 text-white lg:w-1/6">
-            Agendar
+          <button
+            className="w-6/12 bg-sky-600 rounded p-2 text-white lg:w-1/6 disabled:bg-sky-300"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Agendando..." : "Agendar"}
           </button>
         </div>
       </form>

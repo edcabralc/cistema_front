@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
-import { IconCalendarPlus } from "@tabler/icons-react";
+
 import Link from "next/link";
+import { IconCalendarPlus } from "@tabler/icons-react";
 
 import { useFetch } from "@/data/hooks/useFetch";
 import { useApi } from "@/data/hooks/useApi";
@@ -10,6 +10,14 @@ import { ReserveType } from "@/data/@types/reserve.type";
 
 import { Article } from "@/components/Article";
 import { Card } from "@/components/Card";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Page = () => {
   const reservas = useFetch<ReserveType[]>("/agenda");
@@ -43,38 +51,39 @@ const Page = () => {
 
   return (
     <Article>
-      <div className="pb-4 mb-8 flex flex-col gap-8 lg:flex-row items-center justify-between border-b">
-        <h1 className="font-bold flex-1 text-2xl">
-          AGENDAMENTO LABORATÓRIO IDIOMAS
-        </h1>
+      <div className="pb-4 mt-1 mb-8 flex flex-col gap-8 lg:flex-row items-center justify-between border-b">
+        <h1 className="font-bold flex-1 text-2xl">AGENDAMENTO IDIOMAS</h1>
         <div className="w-full flex flex-1 lg:justify-end items-center gap-4">
-          <div className="flex gap-4 items-center rounded border py-1 focus:border border-sky-600">
+          <div className="">
             <form action="max-w-sm mx-auto">
-              <select
-                name="filter"
-                id="filter"
-                className="appearance-none border-none focus:outline-none focus:ring-0 focus:border-gray-200 peer"
-              >
-                <option value="">Hoje</option>
-                <option value="">Semana</option>
-                <option value="">Mês</option>
-              </select>
+              <Select>
+                <SelectTrigger className="w-28">
+                  <SelectValue placeholder="Hoje" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="light">Hoje</SelectItem>
+                  <SelectItem value="dark">Semana</SelectItem>
+                  <SelectItem value="system">Mês</SelectItem>
+                </SelectContent>
+              </Select>
             </form>
           </div>
           <div className="">
-            <Link
-              className="flex items-center justify-center gap-3  bg-sky-600 rounded py-3 px-4 text-white "
-              href={"/agenda/reservar"}
-            >
-              <IconCalendarPlus />
-              Reservar
-            </Link>
+            <Button asChild>
+              <Link
+                className="flex items-center justify-center gap-3"
+                href={"/agenda/reservar"}
+              >
+                <IconCalendarPlus />
+                Reservar
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
       <section>
         <div className="flex flex-col gap-4 ">
-          {!reservas.data ? (
+          {reservas.data?.length === 0 ? (
             <p>Nenhum agendamento</p>
           ) : (
             <>

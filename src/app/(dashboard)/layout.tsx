@@ -42,8 +42,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           {children}
         </article>
       </div>
-      {/* <Aside/> */}
-      <div className="w-96">hahahah</div>
+      <Aside />
+      {/* <div className="w-96">hahahah</div> */}
     </main>
   );
 };

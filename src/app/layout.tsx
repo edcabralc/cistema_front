@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+import { cn } from "@/lib/utils";
+
+const fontSans = FontSans({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  style: "normal",
-  display: "swap",
+  variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
@@ -21,9 +21,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* <body className={inter.className}>{children}</body> */}
-      <body>
-        <div className={`root ${inter.className}`}>{children}</div>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        <div>{children}</div>
       </body>
     </html>
   );

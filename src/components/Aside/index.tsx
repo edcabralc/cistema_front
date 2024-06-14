@@ -1,14 +1,12 @@
 import { Calendar } from "@/components/ui/calendar";
-import { Profile } from "../Profile";
+import { Profile } from "@/components/Profile";
 
 export const Aside = () => {
   return (
-    <div className="h-full flex p-6 justify-center bg-white border rounded ">
+    <div className="h-full flex p-4 justify-center bg-white border rounded ">
       <div className="w-full flex flex-col">
-        <div>
-          <Profile />
-        </div>
-        <Calendar className="p-0 mt-4"></Calendar>
+        <Profile />
+        <Calendar className="p-0 mt-4" />
       </div>
     </div>
   );

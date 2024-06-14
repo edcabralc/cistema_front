@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { ReactElement } from "react";
 
 type CardBadgeProps = {
   text: string;

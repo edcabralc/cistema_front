@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Loading } from "@/components/Loading";
 
 const Page = () => {
   const reservas = useFetch<ReserveType[]>("/agenda");
@@ -51,9 +52,9 @@ const Page = () => {
 
   return (
     <Article>
-      <div className="pb-4 mt-1 mb-8 flex flex-col gap-8 lg:flex-row items-center justify-between border-b">
-        <h1 className="font-bold flex-1 text-2xl">AGENDAMENTO IDIOMAS</h1>
-        <div className="w-full flex flex-1 lg:justify-end items-center gap-4">
+      <div className="mb-8 mt-1 flex flex-col items-center justify-between gap-8 border-b pb-4 lg:flex-row">
+        <h1 className="flex-1 text-2xl font-bold">AGENDAMENTO IDIOMAS</h1>
+        <div className="flex w-full flex-1 items-center gap-4 lg:justify-end">
           <div className="">
             <form action="max-w-sm mx-auto">
               <Select>
@@ -72,8 +73,7 @@ const Page = () => {
             <Button asChild>
               <Link
                 className="flex items-center justify-center gap-3"
-                href={"/agenda/reservar"}
-              >
+                href={"/agenda/reservar"}>
                 <IconCalendarPlus />
                 Reservar
               </Link>
@@ -82,13 +82,13 @@ const Page = () => {
         </div>
       </div>
       <section>
-        <div className="flex flex-col gap-4 ">
+        <div className="flex flex-col gap-4">
           {reservas.data?.length === 0 ? (
             <p>Nenhum agendamento</p>
           ) : (
             <>
               {reservas.loading ? (
-                "Carregando..."
+                <Loading />
               ) : (
                 <>
                   {/* {reservas.data?.sort(compare).map((reserva: ReserveType) => ( */}

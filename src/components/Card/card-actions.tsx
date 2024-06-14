@@ -2,18 +2,12 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
 import { EllipsisVertical } from "lucide-react";
-import {
-  IconCalendarCheck,
-  IconCalendarCog,
-  IconCalendarMinus,
-} from "@tabler/icons-react";
+import { IconCalendarCog } from "@tabler/icons-react";
 
 export const CardAction = () => {
   return (

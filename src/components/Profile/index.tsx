@@ -6,8 +6,8 @@ import { Bell } from "lucide-react";
 
 export const Profile = () => {
   return (
-    <Card className="flex gap-4 justify-between items-center p-3">
-      <div className="flex gap-3">
+    <Card className="flex items-center justify-between gap-4 p-3">
+      <div className="flex items-center gap-3">
         <Avatar>
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
           <AvatarFallback>CN</AvatarFallback>

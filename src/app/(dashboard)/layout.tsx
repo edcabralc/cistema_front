@@ -1,27 +1,24 @@
-"use client";
-
 import { Menu } from "@/components/Menu";
 import Image from "next/image";
-import { useState } from "react";
-import { IconMenu } from "@tabler/icons-react";
+
 import { Aside } from "@/components/Aside";
 import { Logo } from "@/components/Logo";
+import { MenuMobile } from "@/components/Menu/menu-mobile";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  const [open, setOpen] = useState(false);
-
   return (
-    <main className="flex h-screen">
+    <main className="flex flex-col h-screen md:flex-row">
       <>
-        <div className={`${open ? "w-1/5" : "w-20"} border-r`}>
-          <span
-            className="left-10 flex justify-center p-5"
-            onClick={() => setOpen(!open)}>
-            <IconMenu stroke={2} />
-          </span>
-          <aside className="relative flex w-full flex-col">
-            <Logo />
-            <Menu open={open} />
+        {/* <div className={`${open ? "w-1/5" : "w-20"} border-r`}> */}
+        <div className="border-r ">
+          <aside className="flex flex-row w-full md:flex-col">
+            <div className="w-full flex-col hidden md:flex">
+              <Menu />
+            </div>
+            <div className="w-full justify-between items-center flex md:hidden">
+              <Logo />
+              <MenuMobile />
+            </div>
           </aside>
         </div>
       </>

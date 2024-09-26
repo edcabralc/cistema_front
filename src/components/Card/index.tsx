@@ -35,6 +35,18 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Content } from "@/components/Card/card-content";
+// import { AlertDialog, AlertDialogContent, AlertDialogContent, AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTrigger,
+  AlertDialogCancel,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+} from "../ui/alert-dialog";
 
 interface CardProps {
   reserva: ReserveType;
@@ -59,7 +71,7 @@ export const Card = ({ reserva, reload }: CardProps) => {
     try {
       const response = await editData<ReserveType>(
         `agenda/reserva/atualizar/${data.id}`,
-        data
+        data,
       );
 
       if (response.status !== 200) {
@@ -85,7 +97,7 @@ export const Card = ({ reserva, reload }: CardProps) => {
     try {
       const response = await editData<ReserveType>(
         `agenda/reserva/atualizar/${data.id}`,
-        data
+        data,
       );
 
       if (response.status !== 200) {
@@ -101,7 +113,7 @@ export const Card = ({ reserva, reload }: CardProps) => {
   };
 
   const handleClose = () => {
-    reload();
+    // reload();
     setMessage(null);
     setIsOpen(false);
   };
@@ -150,21 +162,21 @@ export const Card = ({ reserva, reload }: CardProps) => {
                 </span>
               </div>
               <div>
-                <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                  <DialogTrigger asChild>
+                <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+                  <AlertDialogTrigger asChild>
                     {reserva.status === "Agendado" ? (
                       <Button variant="outline">Cancelar</Button>
                     ) : (
                       <Button>Aprovar</Button>
                     )}
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle className="text-xl">
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="text-xl">
                         Confirmar agendamento
-                      </DialogTitle>
-                      <DialogDescription>asjafsd</DialogDescription>
-                    </DialogHeader>
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>asjafsd</AlertDialogDescription>
+                    </AlertDialogHeader>
                     <input
                       type="hidden"
                       {...register("id")}
@@ -186,9 +198,8 @@ export const Card = ({ reserva, reload }: CardProps) => {
                               message
                             ) : (
                               <>
-                                Confirmar o agendamento de {reserva.user.name}{" "}
-                                em
-                                {reserva.date}
+                                {`Confirmar o agendamento de ${reserva.user.name} 
+                                em ${reserva.date}`}
                               </>
                             )}
                           </p>
@@ -197,37 +208,45 @@ export const Card = ({ reserva, reload }: CardProps) => {
                     </div>
                     <Separator />
 
-                    <DialogFooter className="sm:justify-start">
-                      <DialogClose asChild>
-                        <div className="flex w-full justify-end gap-4">
-                          {message ? (
-                            <>
-                              <Button onClick={handleClose} type="reset">
-                                Fechar
-                              </Button>
-                            </>
-                          ) : (
-                            <>
-                              <Button
-                                type="reset"
-                                disabled={loading}
-                                variant="outline">
-                                Cancelar
-                              </Button>
+                    <AlertDialogFooter className="sm:justify-start">
+                      <>
+                        <AlertDialogCancel onClick={handleClose}>
+                          Fechar
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={handleSubmit(handleApprove)}
+                        >
+                          Aprovar
+                        </AlertDialogAction>
+                      </>
+                      {/* {message ? (
+                        <>
+                          <AlertDialogCancel onClick={handleClose}>
+                            Fechar
+                          </AlertDialogCancel>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            type="reset"
+                            disabled={loading}
+                            variant="outline"
+                          >
+                            Cancelar
+                          </Button>
 
-                              <Button
-                                type="button"
-                                onClick={handleSubmit(handleApprove)}
-                                disabled={loading}>
-                                Aprovar
-                              </Button>
-                            </>
-                          )}
-                        </div>
-                      </DialogClose>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                          <Button
+                            type="button"
+                            onClick={handleSubmit(handleApprove)}
+                            disabled={loading}
+                          >
+                            Aprovar
+                          </Button>
+                        </>
+                      )} */}
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
           </CardFooter>

@@ -9,10 +9,12 @@ import { ptBR } from "date-fns/locale";
 import { useApi } from "@/data/hooks/useApi";
 
 import { Article } from "@/components/Article";
+import { Header } from "@/components/Header";
 import { ReserveType, Book } from "@/data/@types/reserve.type";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Form } from "@/components/Form";
 
 const Page = () => {
   const [loading, setLoading] = useState<boolean | null>(null);
@@ -39,17 +41,17 @@ const Page = () => {
       locale: ptBR,
     });
     const formattedDate = format(parsedDate, "dd/MM/yyyy", { locale: ptBR });
+
     const response = await postData<ReserveType>(
       "agenda/reservar/663e5693a2971d24a1cc9a29",
-      { ...data, date: formattedDate }
+      { ...data, date: formattedDate },
     );
 
     if (response.status !== 200) {
       throw new Error(
-        "Não foi possivel autorizar o agendamento. Erro inesperado."
+        "Não foi possivel autorizar o agendamento. Erro inesperado.",
       );
     }
-
     setLoading(false);
 
     console.log(response);
@@ -59,8 +61,7 @@ const Page = () => {
 
   return (
     <Article>
-      <div className="pb-4 mb-8 flex items-center justify-between border-b">
-        <h1 className="font-bold text-2xl">Agendamento</h1>
+      <Header title="Agendamento">
         <Button asChild variant="secondary">
           <Link
             className="self-end flex items-center justify-center gap-3"
@@ -70,15 +71,15 @@ const Page = () => {
             Voltar
           </Link>
         </Button>
-      </div>
+      </Header>
+
       <form
         className="flex flex-col space-3 h-96 text-zinc-600 "
         onSubmit={handleSubmit(onSubmit)}
       >
-        <Label>Teste</Label>
-        <Input type="date"></Input>
         <div className="flex flex-col gap-2">
-          <label>O que deseja Agendar?</label>
+          <Label>O que deseja Agendar?</Label>
+          <Form.select />
           <select
             {...register("book")}
             className="block w-full mt-1 rounded border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"

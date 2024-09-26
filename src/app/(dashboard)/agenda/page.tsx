@@ -19,6 +19,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loading } from "@/components/Loading";
+import { Header } from "@/components/Header";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ReservaModal } from "@/components/ReservaModal";
+import { Separator } from "@/components/ui/separator";
 
 const Page = () => {
   const reservas = useFetch<ReserveType[]>("/agenda");
@@ -52,8 +63,7 @@ const Page = () => {
 
   return (
     <Article>
-      <div className="mb-8 mt-1 flex flex-col items-center justify-between gap-8 border-b pb-4 lg:flex-row">
-        <h1 className="flex-1 text-2xl font-bold">AGENDAMENTO IDIOMAS</h1>
+      <Header title="Agenda Laboratório">
         <div className="flex w-full flex-1 items-center gap-4 lg:justify-end">
           <div className="">
             <form action="max-w-sm mx-auto">
@@ -69,18 +79,31 @@ const Page = () => {
               </Select>
             </form>
           </div>
-          <div className="">
-            <Button asChild>
-              <Link
-                className="flex items-center justify-center gap-3"
-                href={"/agenda/reservar"}>
-                <IconCalendarPlus />
-                Reservar
-              </Link>
-            </Button>
-          </div>
+
+          <Dialog>
+            <DialogTrigger>
+              <Button asChild>
+                <div className="flex items-center justify-center gap-3">
+                  <IconCalendarPlus />
+                  Reservar
+                </div>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-max h-max">
+              <DialogHeader>
+                <DialogTitle>Agendamento</DialogTitle>
+                <DialogDescription>
+                  Agende laboratório ou equipamentos.
+                </DialogDescription>
+              </DialogHeader>
+              <Separator className="mt-2" />
+              <ReservaModal />
+              {/* <ReservaFormal /> */}
+            </DialogContent>
+          </Dialog>
         </div>
-      </div>
+      </Header>
+
       <section>
         <div className="flex flex-col gap-4">
           {reservas.data?.length === 0 ? (

@@ -1,59 +1,41 @@
-import { useState } from "react";
-
-import { useForm } from "react-hook-form";
-
-import { ReserveType, Status } from "@/data/@types/reserve.type";
-
-import { useApi } from "@/data/hooks/useApi";
-import { useFetch } from "@/data/hooks/useFetch";
-
+"use client";
+import { Content } from "@/components/Card/card-content";
 import { Loading } from "@/components/Loading";
-
+import { Button } from "@/components/ui/button";
 import {
-  Card as CardRoot,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
+  Card as CardRoot,
   CardTitle,
 } from "@/components/ui/card";
-
-import { CardBadge } from "./card-badge";
-import { CardAvatar } from "./card-avatar";
-
-import { CardAction } from "./card-actions";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Content } from "@/components/Card/card-content";
-// import { AlertDialog, AlertDialogContent, AlertDialogContent, AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
+import { ReserveType, Status } from "@/data/@types/reserve.type";
+import { useApi } from "@/data/hooks/useApi";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { CardAction } from "./card-actions";
+import { CardAvatar } from "./card-avatar";
+import { CardBadge } from "./card-badge";
+
 import {
   AlertDialog,
-  AlertDialogContent,
-  AlertDialogTrigger,
+  AlertDialogAction,
   AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogAction,
+  AlertDialogTrigger,
 } from "../ui/alert-dialog";
 
 interface CardProps {
-  reserva: ReserveType;
-  reload: () => void;
+  reserve: ReserveType;
 }
 
-export const Card = ({ reserva, reload }: CardProps) => {
+export const Card = ({ reserve }: CardProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -113,7 +95,6 @@ export const Card = ({ reserva, reload }: CardProps) => {
   };
 
   const handleClose = () => {
-    // reload();
     setMessage(null);
     setIsOpen(false);
   };
@@ -128,10 +109,11 @@ export const Card = ({ reserva, reload }: CardProps) => {
                 <CardAvatar />
                 <div className="flex flex-col">
                   <CardTitle className="text-base font-bold">
-                    {reserva.user.name}
+                    {/* {reserve?.user.name} */}
+                    {reserve.user.id}
                   </CardTitle>
                   <CardDescription>
-                    <p>Professor</p>
+                    {reserve.user.id} {/* {reserve?.user.name} */}
                   </CardDescription>
                 </div>
               </div>
@@ -143,10 +125,10 @@ export const Card = ({ reserva, reload }: CardProps) => {
         <div className="pt-4">
           <CardContent className="flex flex-col gap-4 md:flex-row">
             <Content
-              time={reserva.time}
-              classCode={reserva.classCode}
-              date={reserva.date}
-              students={reserva.students}
+              time={reserve.time}
+              classCode={reserve.classCode}
+              date={reserve.date}
+              students={reserve.students}
             />
           </CardContent>
           <Separator />
@@ -155,16 +137,16 @@ export const Card = ({ reserva, reload }: CardProps) => {
               <div className="flex flex-col gap-2 md:flex-row md:gap-8">
                 <div className="flex gap-2">
                   <p className="font-semibold">Reserva:</p>
-                  <p>{reserva.book}</p>
+                  <p>{reserve.book}</p>
                 </div>
                 <span>
-                  Status: <CardBadge text={reserva.status} />
+                  Status: <CardBadge text={reserve.status} />
                 </span>
               </div>
               <div>
                 <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                   <AlertDialogTrigger asChild>
-                    {reserva.status === "Agendado" ? (
+                    {reserve.status === "Agendado" ? (
                       <Button variant="outline">Cancelar</Button>
                     ) : (
                       <Button>Aprovar</Button>
@@ -180,7 +162,7 @@ export const Card = ({ reserva, reload }: CardProps) => {
                     <input
                       type="hidden"
                       {...register("id")}
-                      value={reserva.id}
+                      value={reserve.id}
                       name="_id"
                       id="formUpdate"
                     />
@@ -188,22 +170,18 @@ export const Card = ({ reserva, reload }: CardProps) => {
                     <form id="formUpdate" />
                     <div>
                       {loading ? (
-                        <>
-                          <Loading />
-                        </>
+                        <Loading />
                       ) : (
-                        <>
-                          <p>
-                            {message ? (
-                              message
-                            ) : (
-                              <>
-                                {`Confirmar o agendamento de ${reserva.user.name} 
-                                em ${reserva.date}`}
-                              </>
-                            )}
-                          </p>
-                        </>
+                        <p>
+                          {message ? (
+                            message
+                          ) : (
+                            <>
+                              {`Confirmar o agendamento de ${"reserve.user.name"} 
+                                em ${reserve.date}`}
+                            </>
+                          )}
+                        </p>
                       )}
                     </div>
                     <Separator />

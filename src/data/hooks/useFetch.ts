@@ -7,12 +7,13 @@ interface TypeHttpRequest<T> {
   error: string | null;
   data: T | null;
   reload: () => void;
+  updateList: (d: any) => void;
 }
 
 export const useFetch = <T>(
   url: string,
 
-  config?: AxiosRequestConfig
+  config?: AxiosRequestConfig,
 ): TypeHttpRequest<T> => {
   const [loading, setLoading] = useState<boolean | null>(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,5 +59,11 @@ export const useFetch = <T>(
 
   const reload = () => fetchData();
 
-  return { loading, error, data, reload };
+  const updateList = (d: any) => {
+    setData({ ...data, ...d });
+    console.log("dentro do useFetch", d);
+    console.log("dentro do useFetch", data);
+  };
+
+  return { loading, error, data, reload, updateList };
 };

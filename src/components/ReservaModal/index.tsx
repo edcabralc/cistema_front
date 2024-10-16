@@ -1,18 +1,22 @@
-"use client";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { parse, format } from "date-fns";
+import { format, parse } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 import { useApi } from "@/data/hooks/useApi";
 
-import { ReserveType, Book } from "@/data/@types/reserve.type";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Book, ReserveType } from "@/data/@types/reserve.type";
+import { useAgenda } from "@/data/contexts/agenda.context";
+import { useFetch } from "@/data/hooks/useFetch";
+import { toast } from "@/hooks/use-toast";
 
-export const ReservaModal = () => {
+export const ReservaModal = ({ setOpen }: any) => {
+  const agendaCtx = useAgenda();
   const [loading, setLoading] = useState<boolean | null>(null);
+  const { updateList } = useFetch<ReserveType>("", {});
   const { postData } = useApi();
 
   const {
@@ -57,27 +61,57 @@ export const ReservaModal = () => {
       locale: ptBR,
     });
     const formattedDate = format(parsedDate, "dd/MM/yyyy", { locale: ptBR });
+    const newAgenda = { ...data, date: formattedDate };
 
-    const response = await postData<ReserveType>(
-      "agenda/reservar/663e5693a2971d24a1cc9a29",
-      { ...data, date: formattedDate },
-    );
-
-    if (response.status !== 200) {
-      throw new Error(
-        "Não foi possivel autorizar o agendamento. Erro inesperado.",
+    try {
+      const response = await postData<ReserveType>(
+        "agenda/reservar/663e5693a2971d24a1cc9a29",
+        newAgenda,
       );
-    }
-    setLoading(false);
 
-    console.log(response);
-    console.log(data);
-    console.log({ ...data, date: formattedDate });
+      if (response.status !== 200) {
+        toast({
+          title: "Não foi possivel autorizar o agendamento. Erro inesperado.",
+          description: (
+            <>
+              <p>
+                {newAgenda.book} - {newAgenda.date}
+              </p>
+            </>
+          ),
+        });
+
+        throw new Error(
+          "Não foi possivel autorizar o agendamento. Erro inesperado.",
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    toast({
+      title: "Agendamento realizado com sucesso",
+      description: (
+        <>
+          <p>
+            {newAgenda.book} - {newAgenda.date}
+          </p>
+        </>
+      ),
+    });
+
+    agendaCtx?.addReserve(newAgenda);
+
+    setLoading(false);
+    setOpen(false);
+
+    // console.log(response);
+    // console.log(newAgenda);
+    // console.log(data);
+    // console.log({ ...data, date: formattedDate });
   };
 
-  // console.log(times);
-
-  console.log(times.filter((time) => time.shift === "manha"));
+  // console.log(times.filter((time) => time.shift === "manha"));
 
   return (
     <div>

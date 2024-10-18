@@ -22,12 +22,12 @@ export const Menu = () => {
         <Logo />
       )}
       <menu className="flex flex-col gap-4">
-        <li className="py-4 px-6">
+        <li className="group p-2">
           <Link href={"/"}>
             {open ? (
-              <span className="flex gap-4">
-                <IconLayoutDashboard className="col-auto" />
-                <p className="">Inicio</p>
+              <span className="flex gap-4 px-4 py-2 group-hover:bg-muted hover:rounded">
+                <IconLayoutDashboard className="group-hover:text-slate-500 col-auto" />
+                <p className="group-hover:text-slate-500">Inicio</p>
               </span>
             ) : (
               <IconLayoutDashboard className="col-auto" />

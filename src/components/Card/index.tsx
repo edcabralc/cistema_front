@@ -31,9 +31,9 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 
-interface CardProps {
+type CardProps = {
   reserve: ReserveType;
-}
+};
 
 export const Card = ({ reserve }: CardProps) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -109,12 +109,9 @@ export const Card = ({ reserve }: CardProps) => {
                 <CardAvatar />
                 <div className="flex flex-col">
                   <CardTitle className="text-base font-bold">
-                    {/* {reserve?.user.name} */}
-                    {reserve.user.id}
+                    {reserve.user?.name}
                   </CardTitle>
-                  <CardDescription>
-                    {reserve.user.id} {/* {reserve?.user.name} */}
-                  </CardDescription>
+                  <CardDescription>{reserve.user?.role}</CardDescription>
                 </div>
               </div>
             </div>
@@ -177,7 +174,7 @@ export const Card = ({ reserve }: CardProps) => {
                             message
                           ) : (
                             <>
-                              {`Confirmar o agendamento de ${"reserve.user.name"} 
+                              {`Confirmar o agendamento de ${reserve.user?.name} 
                                 em ${reserve.date}`}
                             </>
                           )}

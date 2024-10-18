@@ -17,7 +17,7 @@ export type ReserveType = {
   userId: string;
   date: string;
   time: [string];
-  students: number;
+  students: string;
   classCode: string;
   status: Status;
   book: Book;

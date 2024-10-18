@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -13,7 +15,7 @@ import { useAgenda } from "@/data/contexts/agenda.context";
 import { useFetch } from "@/data/hooks/useFetch";
 import { toast } from "@/hooks/use-toast";
 
-export const ReservaModal = ({ setOpen }: any) => {
+export const ReservaForm = ({ setOpen }: any) => {
   const agendaCtx = useAgenda();
   const [loading, setLoading] = useState<boolean | null>(null);
   const { updateList } = useFetch<ReserveType>("", {});
@@ -29,7 +31,7 @@ export const ReservaModal = ({ setOpen }: any) => {
       classCode: "",
       time: [],
       date: `${new Date()}`,
-      students: 0,
+      students: "",
     },
   });
   const times = [
@@ -61,11 +63,11 @@ export const ReservaModal = ({ setOpen }: any) => {
       locale: ptBR,
     });
     const formattedDate = format(parsedDate, "dd/MM/yyyy", { locale: ptBR });
-    const newAgenda = { ...data, date: formattedDate };
+    const newAgenda = { ...data, date: formattedDate, status: data.status };
 
     try {
       const response = await postData<ReserveType>(
-        "agenda/reservar/663e5693a2971d24a1cc9a29",
+        "agenda/reservar/6661ae2a4aeef1073b41b70d",
         newAgenda,
       );
 
@@ -85,6 +87,9 @@ export const ReservaModal = ({ setOpen }: any) => {
           "Não foi possivel autorizar o agendamento. Erro inesperado.",
         );
       }
+      console.log(response);
+      console.log(response.data);
+      agendaCtx?.addReserve(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -100,14 +105,11 @@ export const ReservaModal = ({ setOpen }: any) => {
       ),
     });
 
-    agendaCtx?.addReserve(newAgenda);
-
     setLoading(false);
-    setOpen(false);
+    // setOpen(false);
 
-    // console.log(response);
     // console.log(newAgenda);
-    // console.log(data);
+
     // console.log({ ...data, date: formattedDate });
   };
 

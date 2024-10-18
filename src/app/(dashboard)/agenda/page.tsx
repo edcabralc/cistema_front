@@ -1,21 +1,7 @@
-"use client";
-
-import { IconCalendarPlus } from "@tabler/icons-react";
-import { useState } from "react";
-
 import { Agenda } from "@/components/Agenda";
 import { Article } from "@/components/Article";
 import { Header } from "@/components/Header";
-import { ReservaModal } from "@/components/ReservaModal";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import {
   Select,
   SelectContent,
@@ -23,14 +9,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { AgendaProvider } from "@/data/contexts/agenda.context";
+
+import { Main } from "@/components/Main";
+import { Modal } from "@/components/Modal";
+import { ReservaForm } from "@/components/ReservaForm";
 
 const Page = () => {
-  const [open, setOpen] = useState(false);
-
   return (
-    <AgendaProvider>
+    <Main>
       <Article>
         <Header title="Agenda Laboratório">
           <div className="flex w-full flex-1 items-center gap-4 lg:justify-end">
@@ -49,7 +35,7 @@ const Page = () => {
               </form>
             </div>
 
-            <Dialog open={open} onOpenChange={setOpen}>
+            {/* <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger>
                 <Button asChild>
                   <div className="flex items-center justify-center gap-3">
@@ -68,15 +54,21 @@ const Page = () => {
                 <Separator className="mt-2" />
                 <ReservaModal setOpen={setOpen} />
               </DialogContent>
-            </Dialog>
+            </Dialog> */}
+            <Modal
+              titleButton="Reservar"
+              title="Agendamento"
+              description="Agende laboratório ou equipamentos."
+            >
+              <ReservaForm />
+              <p>teste</p>
+            </Modal>
           </div>
         </Header>
 
-        <section>
-          <Agenda />
-        </section>
+        <Agenda />
       </Article>
-    </AgendaProvider>
+    </Main>
   );
 };
 

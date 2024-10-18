@@ -4,7 +4,7 @@ type Props = {
   date: string;
   time: string[];
   classCode: string;
-  students: number;
+  students: string;
 };
 
 export const Content = ({ date, time, classCode, students }: Props) => {

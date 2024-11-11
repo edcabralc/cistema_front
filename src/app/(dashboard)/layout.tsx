@@ -1,19 +1,19 @@
-import { Menu } from "@/components/Menu";
+import { Menu } from "@/components/menu";
 import Image from "next/image";
 
-import { Aside } from "@/components/Aside";
-import { Logo } from "@/components/Logo";
-import { MenuMobile } from "@/components/Menu/menu-mobile";
+import { Aside } from "@/components/aside";
+import { Logo } from "@/components/logo";
+import { MenuMobile } from "@/components/menu/menu-mobile";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <main className="flex flex-col h-screen md:flex-row">
+    <main className="flex h-screen flex-col md:flex-row">
       <div className="border-r">
-        <aside className="flex flex-row w-full md:flex-col">
-          <div className="w-full flex-col hidden md:flex">
+        <aside className="flex w-full flex-row md:flex-col">
+          <div className="hidden w-full flex-col md:flex">
             <Menu />
           </div>
-          <div className="w-full justify-between items-center flex md:hidden">
+          <div className="flex w-full items-center justify-between md:hidden">
             <Logo />
             <MenuMobile />
           </div>

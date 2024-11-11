@@ -1,6 +1,6 @@
-import { Agenda } from "@/components/Agenda";
-import { Article } from "@/components/Article";
-import { Header } from "@/components/Header";
+import { Agenda } from "@/components/agenda";
+import { Article } from "@/components/article";
+import { Header } from "@/components/header";
 
 import {
   Select,
@@ -10,9 +10,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { Main } from "@/components/Main";
-import { Modal } from "@/components/Modal";
-import { ReservaForm } from "@/components/ReservaForm";
+import { Main } from "@/components/main";
+import { Modal } from "@/components/modal";
+import { ReservaForm } from "@/components/forms/reserve-form";
 
 const Page = () => {
   return (
@@ -58,8 +58,7 @@ const Page = () => {
             <Modal
               titleButton="Reservar"
               title="Agendamento"
-              description="Agende laboratório ou equipamentos."
-            >
+              description="Agende laboratório ou equipamentos.">
               <ReservaForm />
               <p>teste</p>
             </Modal>

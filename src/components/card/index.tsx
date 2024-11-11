@@ -1,6 +1,6 @@
 "use client";
-import { Content } from "@/components/Card/card-content";
-import { Loading } from "@/components/Loading";
+import { Content } from "@/components/card/card-content";
+import { Loading } from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
@@ -53,7 +53,7 @@ export const Card = ({ reserve }: CardProps) => {
     try {
       const response = await editData<ReserveType>(
         `agenda/reserva/atualizar/${data.id}`,
-        data,
+        data
       );
 
       if (response.status !== 200) {
@@ -79,7 +79,7 @@ export const Card = ({ reserve }: CardProps) => {
     try {
       const response = await editData<ReserveType>(
         `agenda/reserva/atualizar/${data.id}`,
-        data,
+        data
       );
 
       if (response.status !== 200) {
@@ -189,8 +189,7 @@ export const Card = ({ reserve }: CardProps) => {
                           Fechar
                         </AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={handleSubmit(handleApprove)}
-                        >
+                          onClick={handleSubmit(handleApprove)}>
                           Aprovar
                         </AlertDialogAction>
                       </>

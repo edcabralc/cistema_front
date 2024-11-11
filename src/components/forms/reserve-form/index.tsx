@@ -14,6 +14,7 @@ import { Book, ReserveType } from "@/data/@types/reserve.type";
 import { useAgenda } from "@/data/contexts/agenda.context";
 import { useFetch } from "@/data/hooks/useFetch";
 import { toast } from "@/hooks/use-toast";
+import { addReserve } from "@/actions/add-reserve";
 
 export const ReservaForm = ({ setOpen }: any) => {
   const agendaCtx = useAgenda();
@@ -30,7 +31,7 @@ export const ReservaForm = ({ setOpen }: any) => {
       book: Book.LAB,
       classCode: "",
       time: [],
-      date: `${new Date()}`,
+      date: "",
       students: "",
     },
   });
@@ -64,14 +65,13 @@ export const ReservaForm = ({ setOpen }: any) => {
     });
     const formattedDate = format(parsedDate, "dd/MM/yyyy", { locale: ptBR });
     const newAgenda = { ...data, date: formattedDate, status: data.status };
+    console.log(data);
+    return;
 
     try {
-      const response = await postData<ReserveType>(
-        "agenda/reservar/6661ae2a4aeef1073b41b70d",
-        newAgenda,
-      );
+      const response = await addReserve(newAgenda);
 
-      if (response.status !== 200) {
+      if (response?.status !== 200) {
         toast({
           title: "Não foi possivel autorizar o agendamento. Erro inesperado.",
           description: (
@@ -84,12 +84,11 @@ export const ReservaForm = ({ setOpen }: any) => {
         });
 
         throw new Error(
-          "Não foi possivel autorizar o agendamento. Erro inesperado.",
+          "Não foi possivel autorizar o agendamento. Erro inesperado."
         );
       }
       console.log(response);
       console.log(response.data);
-      agendaCtx?.addReserve(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -106,11 +105,6 @@ export const ReservaForm = ({ setOpen }: any) => {
     });
 
     setLoading(false);
-    // setOpen(false);
-
-    // console.log(newAgenda);
-
-    // console.log({ ...data, date: formattedDate });
   };
 
   // console.log(times.filter((time) => time.shift === "manha"));
@@ -119,14 +113,12 @@ export const ReservaForm = ({ setOpen }: any) => {
     <div>
       <form
         className="flex flex-col gap-4 text-zinc-600"
-        onSubmit={handleSubmit(onSubmit)}
-      >
+        onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-2">
           <Label className="font-bold">O que deseja Agendar?</Label>
           <select
             {...register("book")}
-            className="p-2 w-full mt-1 border rounded border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          >
+            className="mt-1 w-full rounded border border-gray-300 p-2 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
             <option value="Laboratório">Laboratório</option>
             <option value="Chromebook">Chromebook</option>
             <option value="Oculos VR">Oculos VR</option>
@@ -136,11 +128,11 @@ export const ReservaForm = ({ setOpen }: any) => {
           </p>
         </div>
 
-        <div className="w-full flex gap-8">
-          <div className="w-full flex flex-col gap-2 relative">
+        <div className="flex w-full gap-8">
+          <div className="relative flex w-full flex-col gap-2">
             <Label className="font-bold">Código da Turma (SIG):</Label>
             <input
-              className="p-2 mt-1 block w-full rounded border border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="mt-1 block w-full rounded border border-gray-300 p-2 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               type="text"
               placeholder="Código da turma"
               {...register("classCode", {
@@ -152,10 +144,10 @@ export const ReservaForm = ({ setOpen }: any) => {
             </p>
           </div>
 
-          <div className="w-full flex flex-col gap-2 relative">
+          <div className="relative flex w-full flex-col gap-2">
             <Label className="font-bold">Alunos por turma:</Label>
             <input
-              className="p-2 mt-1 block w-full border rounded border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="mt-1 block w-full rounded border border-gray-300 p-2 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               placeholder="Quantidade de alunos"
               type="text"
               {...register("students", {
@@ -169,13 +161,12 @@ export const ReservaForm = ({ setOpen }: any) => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 relative">
+        <div className="relative flex flex-col gap-2">
           <Label className="font-bold">Data do agendamento:</Label>
           <input
-            className="p-2 mt-1 block w-full border rounded border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="mt-1 block w-full rounded border border-gray-300 p-2 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             type="date"
             {...register("date", {
-              // valueAsDate: true,
               required: "Campo obrigatório",
             })}
           />
@@ -191,21 +182,20 @@ export const ReservaForm = ({ setOpen }: any) => {
             <Label className="text-xs">Manhã</Label>
             <ul className="flex gap-2">
               {times
-                .filter((time) => time.shift === "manha")
-                .map((time) => (
+                .filter(time => time.shift === "manha")
+                .map(time => (
                   <li className="flex flex-1" key={time.value}>
                     <input
                       type="checkbox"
                       id={`${time.shift}-${time.value}`}
                       value={time.value}
-                      className="hidden peer"
+                      className="peer hidden"
                       {...register("time")}
                     />
                     <label
                       htmlFor={`${time.shift}-${time.value}`}
-                      className="flex items-center justify-center w-full p-2 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
-                    >
-                      <p className="w-full text-sm text-center">{time.title}</p>
+                      className="flex w-full cursor-pointer items-center justify-center rounded border border-gray-200 bg-white p-2 hover:bg-gray-50 peer-checked:border-sky-500 peer-checked:bg-slate-100 peer-checked:text-gray-600">
+                      <p className="w-full text-center text-sm">{time.title}</p>
                     </label>
                   </li>
                 ))}
@@ -216,21 +206,20 @@ export const ReservaForm = ({ setOpen }: any) => {
             <Label className="text-xs">Tarde</Label>
             <ul className="flex gap-2">
               {times
-                .filter((time) => time.shift === "tarde")
-                .map((time) => (
+                .filter(time => time.shift === "tarde")
+                .map(time => (
                   <li className="flex flex-1" key={time.value}>
                     <input
                       type="checkbox"
                       id={`${time.shift}-${time.value}`}
                       value={time.value}
-                      className="hidden peer"
+                      className="peer hidden"
                       {...register("time")}
                     />
                     <label
                       htmlFor={`${time.shift}-${time.value}`}
-                      className="flex items-center justify-center w-full p-2 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
-                    >
-                      <p className="w-full text-sm text-center">{time.title}</p>
+                      className="flex w-full cursor-pointer items-center justify-center rounded border border-gray-200 bg-white p-2 hover:bg-gray-50 peer-checked:border-sky-500 peer-checked:bg-slate-100 peer-checked:text-gray-600">
+                      <p className="w-full text-center text-sm">{time.title}</p>
                     </label>
                   </li>
                 ))}
@@ -241,21 +230,20 @@ export const ReservaForm = ({ setOpen }: any) => {
             <Label className="text-xs">Noite</Label>
             <ul className="flex gap-2">
               {times
-                .filter((time) => time.shift === "noite")
-                .map((time) => (
+                .filter(time => time.shift === "noite")
+                .map(time => (
                   <li className="flex flex-1" key={time.value}>
                     <input
                       type="checkbox"
                       id={`${time.shift}-${time.value}`}
                       value={time.value}
-                      className="hidden peer"
+                      className="peer hidden"
                       {...register("time")}
                     />
                     <label
                       htmlFor={`${time.shift}-${time.value}`}
-                      className="flex items-center justify-center w-full p-2 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
-                    >
-                      <p className="w-full text-sm text-center">{time.title}</p>
+                      className="flex w-full cursor-pointer items-center justify-center rounded border border-gray-200 bg-white p-2 hover:bg-gray-50 peer-checked:border-sky-500 peer-checked:bg-slate-100 peer-checked:text-gray-600">
+                      <p className="w-full text-center text-sm">{time.title}</p>
                     </label>
                   </li>
                 ))}
@@ -266,21 +254,20 @@ export const ReservaForm = ({ setOpen }: any) => {
             <Label className="text-xs">Sábado</Label>
             <ul className="flex gap-2">
               {times
-                .filter((time) => time.shift === "sabado")
-                .map((time) => (
+                .filter(time => time.shift === "sabado")
+                .map(time => (
                   <li className="flex flex-1" key={time.value}>
                     <input
                       type="checkbox"
                       id={`${time.shift}-${time.value}`}
                       value={time.value}
-                      className="hidden peer"
+                      className="peer hidden"
                       {...register("time")}
                     />
                     <label
                       htmlFor={`${time.shift}-${time.value}`}
-                      className="flex items-center justify-center w-full p-2 bg-white border border-gray-200 rounded cursor-pointer peer-checked:border-sky-500 peer-checked:text-gray-600 peer-checked:bg-slate-100 hover:bg-gray-50"
-                    >
-                      <p className="w-full text-sm text-center">{time.title}</p>
+                      className="flex w-full cursor-pointer items-center justify-center rounded border border-gray-200 bg-white p-2 hover:bg-gray-50 peer-checked:border-sky-500 peer-checked:bg-slate-100 peer-checked:text-gray-600">
+                      <p className="w-full text-center text-sm">{time.title}</p>
                     </label>
                   </li>
                 ))}
@@ -288,7 +275,7 @@ export const ReservaForm = ({ setOpen }: any) => {
           </div>
         </div>
 
-        <div className="w-full flex gap-4 mt-2 lg:justify-end">
+        <div className="mt-2 flex w-full gap-4 lg:justify-end">
           <Button type="reset" variant={"outline"}>
             Cancelar
           </Button>

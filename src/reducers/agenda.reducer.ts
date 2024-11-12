@@ -1,5 +1,5 @@
 import { Reducer } from "react";
-import { ReserveType } from "./../data/@types/reserve.type";
+import { ReserveType } from "../types/reserve.type";
 
 type AddReserve = { type: "add-reserve"; payload: ReserveType };
 type RemoveReserve = { type: "remove-reserve"; payload: { id: string } };
@@ -14,7 +14,7 @@ type ReserveReducerType =
 
 const reserveReducer: Reducer<ReserveType[], ReserveReducerType> = (
   state,
-  action,
+  action
 ) => {
   const { type, payload } = action;
 
@@ -23,11 +23,11 @@ const reserveReducer: Reducer<ReserveType[], ReserveReducerType> = (
       return [...state, payload];
 
     case "remove-reserve":
-      return state.filter((reserve) => reserve.id !== payload.id);
+      return state.filter(reserve => reserve.id !== payload.id);
 
     case "edit-reserve":
-      return state.map((reserve) =>
-        reserve.id === payload.id ? { ...reserve, payload } : reserve,
+      return state.map(reserve =>
+        reserve.id === payload.id ? { ...reserve, payload } : reserve
       );
 
     case "load-reserve":

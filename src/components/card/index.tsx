@@ -11,8 +11,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ReserveType, Status } from "@/data/@types/reserve.type";
-import { useApi } from "@/data/hooks/useApi";
+import { ReserveType, Status } from "@/types/reserve.type";
+import { useApi } from "@/hooks/use-api";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { CardAction } from "./card-actions";

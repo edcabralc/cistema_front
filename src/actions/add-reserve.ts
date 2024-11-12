@@ -5,8 +5,8 @@
 //   | EditReserve
 //   | LoadReserve;
 
-import { ReserveType } from "@/data/@types/reserve.type";
-import { useApi } from "@/data/hooks/useApi";
+import { useApi } from "@/hooks/use-api";
+import { ReserveType } from "@/types/reserve.type";
 import { revalidatePath } from "next/cache";
 
 const addReserve = async (reserve: ReserveType) => {

@@ -1,4 +1,4 @@
-import { UserType } from "./user.type";
+import { UserType } from "@/types/user.type";
 
 export enum Status {
   APPROVED = "Agendado",

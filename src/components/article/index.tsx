@@ -1,10 +1,11 @@
 import { Card } from "@/components/ui/card";
+import style from "@/components/article/article.module.css";
 
 export const Article = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      <Card className="h-full flex p-6 pr-3 justify-center">
-        <div className="w-full flex flex-col overflow-y-scroll">{children}</div>
+      <Card className={style.article}>
+        <div className={style.children}>{children}</div>
       </Card>
     </>
   );

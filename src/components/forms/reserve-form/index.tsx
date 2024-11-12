@@ -6,21 +6,15 @@ import { useForm } from "react-hook-form";
 import { format, parse } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-import { useApi } from "@/data/hooks/useApi";
-
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Book, ReserveType } from "@/data/@types/reserve.type";
-import { useAgenda } from "@/data/contexts/agenda.context";
-import { useFetch } from "@/data/hooks/useFetch";
+import { Book, ReserveType } from "@/types/reserve.type";
+
 import { toast } from "@/hooks/use-toast";
 import { addReserve } from "@/actions/add-reserve";
 
 export const ReservaForm = ({ setOpen }: any) => {
-  const agendaCtx = useAgenda();
   const [loading, setLoading] = useState<boolean | null>(null);
-  const { updateList } = useFetch<ReserveType>("", {});
-  const { postData } = useApi();
 
   const {
     register,

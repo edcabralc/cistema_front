@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { api } from "@/services/api";
 import { AxiosRequestConfig, AxiosResponse, isAxiosError } from "axios";
-import { api } from "../services/api";
+import { useEffect, useRef, useState } from "react";
 
 interface TypeHttpRequest<T> {
   loading: boolean | null;
@@ -13,7 +13,7 @@ interface TypeHttpRequest<T> {
 export const useFetch = <T>(
   url: string,
 
-  config?: AxiosRequestConfig,
+  config?: AxiosRequestConfig
 ): TypeHttpRequest<T> => {
   const [loading, setLoading] = useState<boolean | null>(false);
   const [error, setError] = useState<string | null>(null);

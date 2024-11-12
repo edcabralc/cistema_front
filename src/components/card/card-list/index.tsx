@@ -2,9 +2,9 @@ import { Suspense } from "react";
 
 import { Card } from "@/components/card";
 
-import { useApi } from "@/data/hooks/useApi";
+import { useApi } from "@/hooks/use-api";
 
-import { ReserveType } from "@/data/@types/reserve.type";
+import { ReserveType } from "@/types/reserve.type";
 
 export const CardList = async () => {
   const { getData } = useApi();

@@ -1,0 +1,7 @@
+.article {
+  @apply flex h-full justify-center pb-2 pl-2 pr-1 pt-2;
+}
+
+.children {
+  @apply flex w-full flex-col overflow-y-scroll pb-2 pl-2 pt-2;
+}

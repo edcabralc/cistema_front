@@ -1,6 +1,6 @@
 import { reserveReducer } from "@/reducers/agenda.reducer";
 import { createContext, ReactNode, useContext, useReducer } from "react";
-import { ReserveType } from "../@types/reserve.type";
+import { ReserveType } from "@/types/reserve.type";
 
 type AgendaContextType = {
   reserves: ReserveType[];
@@ -32,8 +32,13 @@ const AgendaProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AgendaContext.Provider
-      value={{ reserves, addReserve, removeReserve, editReserve, loadReserves }}
-    >
+      value={{
+        reserves,
+        addReserve,
+        removeReserve,
+        editReserve,
+        loadReserves,
+      }}>
       {children}
     </AgendaContext.Provider>
   );
